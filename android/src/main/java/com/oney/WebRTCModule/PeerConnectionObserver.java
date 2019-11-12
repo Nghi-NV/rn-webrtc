@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
@@ -109,8 +109,6 @@ class PeerConnectionObserver implements PeerConnection.Observer {
     }
 
     void close() {
-        Log.d(TAG, "PeerConnection.close() for " + id);
-
         // Close the PeerConnection first to stop any events.
         peerConnection.close();
 
@@ -124,9 +122,9 @@ class PeerConnectionObserver implements PeerConnection.Observer {
         }
 
         // Remove video track adapters
-        for (MediaStream stream : remoteStreams.values()) {
-            for (VideoTrack videoTrack : stream.videoTracks) {
-                videoTrackAdapters.removeAdapter(videoTrack);
+        for (MediaStreamTrack track : remoteTracks.values()) {
+            if (track.kind().equals("video")) {
+                videoTrackAdapters.removeAdapter((VideoTrack) track);
             }
         }
 
@@ -208,7 +206,6 @@ class PeerConnectionObserver implements PeerConnection.Observer {
         }
     }
 
-    @SuppressWarnings("deprecation") // TODO(saghul): getStats is deprecated.
     void getStats(String trackId, final Callback cb) {
         MediaStreamTrack track = null;
         if (trackId == null
@@ -216,7 +213,12 @@ class PeerConnectionObserver implements PeerConnection.Observer {
                 || (track = webRTCModule.getLocalTrack(trackId)) != null
                 || (track = remoteTracks.get(trackId)) != null) {
             peerConnection.getStats(
-                reports -> cb.invoke(true, statsToJSON(reports)),
+                    new StatsObserver() {
+                        @Override
+                        public void onComplete(StatsReport[] reports) {
+                            cb.invoke(true, statsToJSON(reports));
+                        }
+                    },
                     track);
         } else {
             Log.e(TAG, "peerConnectionGetStats() MediaStreamTrack not found for id: " + trackId);
@@ -343,7 +345,8 @@ class PeerConnectionObserver implements PeerConnection.Observer {
         // MediaStream instance with the label default that the implementation
         // reuses.
         if ("default".equals(streamId)) {
-            for (Map.Entry<String, MediaStream> e : remoteStreams.entrySet()) {
+            for (Map.Entry<String, MediaStream> e
+                    : remoteStreams.entrySet()) {
                 if (e.getValue().equals(mediaStream)) {
                     streamReactTag = e.getKey();
                     break;

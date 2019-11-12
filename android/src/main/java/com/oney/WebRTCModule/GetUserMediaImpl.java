@@ -58,13 +58,14 @@ class GetUserMediaImpl {
     }
 
     private AudioTrack createAudioTrack(ReadableMap constraints) {
-        ReadableMap audioConstraintsMap = constraints.getMap("audio");
+        MediaConstraints audioConstraints
+            = webRTCModule.parseMediaConstraints(constraints.getMap("audio"));
 
-        Log.d(TAG, "getUserMedia(audio): " + audioConstraintsMap);
+        Log.d(TAG, "getUserMedia(audio): " + audioConstraints);
 
         String id = UUID.randomUUID().toString();
         PeerConnectionFactory pcFactory = webRTCModule.mFactory;
-        AudioSource audioSource = pcFactory.createAudioSource(webRTCModule.constraintsForOptions(audioConstraintsMap));
+        AudioSource audioSource = pcFactory.createAudioSource(audioConstraints);
         AudioTrack track = pcFactory.createAudioTrack(id, audioSource);
         tracks.put(
             id,
@@ -86,11 +87,7 @@ class GetUserMediaImpl {
         }
 
         PeerConnectionFactory pcFactory = webRTCModule.mFactory;
-        EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
-        SurfaceTextureHelper surfaceTextureHelper =
-            SurfaceTextureHelper.create("CaptureThread", eglContext);
-        VideoSource videoSource = pcFactory.createVideoSource(videoCapturer.isScreencast());
-        videoCapturer.initialize(surfaceTextureHelper, reactContext, videoSource.getCapturerObserver());
+        VideoSource videoSource = pcFactory.createVideoSource(videoCapturer);
 
         String id = UUID.randomUUID().toString();
         VideoTrack track = pcFactory.createVideoTrack(id, videoSource);
@@ -110,9 +107,9 @@ class GetUserMediaImpl {
         for(int i = 0; i < devices.length; ++i) {
             WritableMap params = Arguments.createMap();
             if (cameraEnumerator.isFrontFacing(devices[i])) {
-                params.putString("facing", "front");
+               params.putString("facing", "front");
             } else {
-                params.putString("facing", "environment");
+                params.putString("facing", "back");
             }
             params.putString("deviceId", "" + i);
             params.putString("groupId", "");
@@ -129,6 +126,10 @@ class GetUserMediaImpl {
         array.pushMap(audio);
 
         return array;
+    }
+
+    private ReactApplicationContext getReactApplicationContext() {
+        return reactContext;
     }
 
     MediaStreamTrack getTrack(String id) {
@@ -217,10 +218,30 @@ class GetUserMediaImpl {
         }
     }
 
-    void disposeTrack(String id) {
+    void mediaStreamTrackStop(String id) {
+        MediaStreamTrack track = getTrack(id);
+        if (track == null) {
+            Log.d(
+                TAG,
+                "mediaStreamTrackStop() No local MediaStreamTrack with id "
+                    + id);
+            return;
+        }
+        track.setEnabled(false);
+        removeTrack(id);
+    }
+
+    private void removeTrack(String id) {
         TrackPrivate track = tracks.remove(id);
         if (track != null) {
-            track.dispose();
+            VideoCaptureController videoCaptureController
+                = track.videoCaptureController;
+            if (videoCaptureController != null) {
+                if (videoCaptureController.stopCapture()) {
+                    videoCaptureController.dispose();
+                }
+            }
+            track.mediaSource.dispose();
         }
     }
 
@@ -250,17 +271,12 @@ class GetUserMediaImpl {
         public final VideoCaptureController videoCaptureController;
 
         /**
-         * Whether this object has been disposed or not.
-         */
-        private boolean disposed;
-
-        /**
          * Initializes a new {@code TrackPrivate} instance.
          *
          * @param track
          * @param mediaSource the {@code MediaSource} from which the specified
          * {@code code} was created
-         * @param videoCaptureController the {@code VideoCaptureController} from which the
+         * @param videoCapturer the {@code VideoCapturer} from which the
          * specified {@code mediaSource} was created if the specified
          * {@code track} is a {@link VideoTrack}
          */
@@ -271,20 +287,6 @@ class GetUserMediaImpl {
             this.track = track;
             this.mediaSource = mediaSource;
             this.videoCaptureController = videoCaptureController;
-            this.disposed = false;
-        }
-
-        public void dispose() {
-            if (!disposed) {
-                if (videoCaptureController != null) {
-                    if (videoCaptureController.stopCapture()) {
-                        videoCaptureController.dispose();
-                    }
-                }
-                mediaSource.dispose();
-                track.dispose();
-                disposed = true;
-            }
         }
     }
 }
