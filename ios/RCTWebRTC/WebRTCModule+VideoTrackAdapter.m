@@ -2,7 +2,6 @@
 #import <Foundation/Foundation.h>
 #include <libkern/OSAtomic.h>
 #import <objc/runtime.h>
-#import <stdatomic.h>
 
 #import <React/RCTBridge.h>
 #import <React/RCTEventDispatcher.h>
@@ -36,7 +35,7 @@ static const NSTimeInterval MUTE_DELAY = 1.5;
 
 @implementation TrackMuteDetector {
     BOOL _disposed;
-    atomic_ullong _frameCount;
+    volatile int64_t _frameCount;
     BOOL _muted;
     dispatch_source_t _timer;
 }
@@ -102,26 +101,26 @@ static const NSTimeInterval MUTE_DELAY = 1.5;
         _timer, dispatch_time(DISPATCH_TIME_NOW, INITIAL_MUTE_DELAY * NSEC_PER_SEC),
         MUTE_DELAY * NSEC_PER_SEC, (1ull * NSEC_PER_SEC) / 10);
 
-    __block unsigned long long lastFrameCount = _frameCount;
+    __block int64_t lastFrameCount = _frameCount;
     dispatch_source_set_event_handler(_timer, ^() {
-        if (self->_disposed) {
+        if (_disposed) {
             return;
         }
 
-        BOOL isMuted = lastFrameCount == self->_frameCount;
-        if (isMuted != self->_muted) {
-            self->_muted = isMuted;
+        BOOL isMuted = lastFrameCount == _frameCount;
+        if (isMuted != _muted) {
+            _muted = isMuted;
             [self emitMuteEvent:isMuted];
         }
 
-        lastFrameCount = self->_frameCount;
+        lastFrameCount = _frameCount;
     });
 
     dispatch_resume(_timer);
 }
 
 - (void)renderFrame:(nullable RTCVideoFrame *)frame {
-    atomic_fetch_add(&_frameCount, 1);
+    OSAtomicIncrement64(&_frameCount);
 }
 
 - (void)setSize:(CGSize)size {

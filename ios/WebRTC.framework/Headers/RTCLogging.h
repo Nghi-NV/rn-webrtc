@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 // Subset of rtc::LoggingSeverity.
 typedef NS_ENUM(NSInteger, RTCLoggingSeverity) {
@@ -18,7 +18,6 @@ typedef NS_ENUM(NSInteger, RTCLoggingSeverity) {
   RTCLoggingSeverityInfo,
   RTCLoggingSeverityWarning,
   RTCLoggingSeverityError,
-  RTCLoggingSeverityNone,
 };
 
 // Wrapper for C++ RTC_LOG(sev) macros.

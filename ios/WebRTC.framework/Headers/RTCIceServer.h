@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 typedef NS_ENUM(NSUInteger, RTCTlsCertPolicy) {
   RTCTlsCertPolicySecure,
@@ -19,7 +19,7 @@ typedef NS_ENUM(NSUInteger, RTCTlsCertPolicy) {
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCIceServer : NSObject
 
 /** URI(s) for this server represented as NSStrings. */

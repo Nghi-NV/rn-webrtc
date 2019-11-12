@@ -10,9 +10,9 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
-#import "RTCMediaStreamTrack.h"
-#import "RTCRtpParameters.h"
+#import <WebRTC/RTCMacros.h>
+#import <WebRTC/RTCMediaStreamTrack.h>
+#import <WebRTC/RTCRtpParameters.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, RTCRtpMediaType) {
 
 @class RTCRtpReceiver;
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @protocol RTCRtpReceiverDelegate <NSObject>
 
 /** Called when the first RTP packet is received.
@@ -45,7 +45,7 @@ RTC_OBJC_EXPORT
 
 @end
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @protocol RTCRtpReceiver <NSObject>
 
 /** A unique identifier for this receiver. */
@@ -72,7 +72,7 @@ RTC_OBJC_EXPORT
 
 @end
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCRtpReceiver : NSObject <RTCRtpReceiver>
 
 - (instancetype)init NS_UNAVAILABLE;

@@ -11,11 +11,11 @@
 #import <AvailabilityMacros.h>
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCDataChannelConfiguration : NSObject
 
 /** Set to YES if ordered delivery is required. */

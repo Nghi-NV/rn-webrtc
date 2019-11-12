@@ -10,9 +10,9 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
-#import "RTCRtpReceiver.h"
-#import "RTCRtpSender.h"
+#import <WebRTC/RTCMacros.h>
+#import <WebRTC/RTCRtpReceiver.h>
+#import <WebRTC/RTCRtpSender.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,7 +28,6 @@ typedef NS_ENUM(NSInteger, RTCRtpTransceiverDirection) {
  *  RTCPeerConnection.addTransceiver.
  *  https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiverinit
  */
-RTC_OBJC_EXPORT
 @interface RTCRtpTransceiverInit : NSObject
 
 /** Direction of the RTCRtpTransceiver. See RTCRtpTransceiver.direction. */
@@ -57,7 +56,7 @@ RTC_OBJC_EXPORT
  *  WebRTC specification for RTCRtpTransceiver, the JavaScript analog:
  *  https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver
  */
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @protocol RTCRtpTransceiver <NSObject>
 
 /** Media type of the transceiver. The sender and receiver will also have this
@@ -119,7 +118,7 @@ RTC_OBJC_EXPORT
 
 @end
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCRtpTransceiver : NSObject <RTCRtpTransceiver>
 
 - (instancetype)init NS_UNAVAILABLE;

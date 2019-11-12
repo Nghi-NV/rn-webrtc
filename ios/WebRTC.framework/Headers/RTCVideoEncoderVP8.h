@@ -10,10 +10,10 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
-#import "RTCVideoEncoder.h"
+#import <WebRTC/RTCMacros.h>
+#import <WebRTC/RTCVideoCodec.h>
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCVideoEncoderVP8 : NSObject
 
 /* This returns a VP8 encoder that can be returned from a RTCVideoEncoderFactory injected into

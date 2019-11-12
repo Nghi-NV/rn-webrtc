@@ -11,18 +11,18 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import "WebRTC/RTCMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_EXTERN const int kRTCAudioSessionPreferredNumberOfChannels;
-RTC_EXTERN const double kRTCAudioSessionHighPerformanceSampleRate;
-RTC_EXTERN const double kRTCAudioSessionLowComplexitySampleRate;
-RTC_EXTERN const double kRTCAudioSessionHighPerformanceIOBufferDuration;
-RTC_EXTERN const double kRTCAudioSessionLowComplexityIOBufferDuration;
+extern const int kRTCAudioSessionPreferredNumberOfChannels;
+extern const double kRTCAudioSessionHighPerformanceSampleRate;
+extern const double kRTCAudioSessionLowComplexitySampleRate;
+extern const double kRTCAudioSessionHighPerformanceIOBufferDuration;
+extern const double kRTCAudioSessionLowComplexityIOBufferDuration;
 
 // Struct to hold configuration values.
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCAudioSessionConfiguration : NSObject
 
 @property(nonatomic, strong) NSString *category;
