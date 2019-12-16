@@ -1,12 +1,12 @@
 'use strict';
 
-import {NativeModules} from 'react-native';
+import { NativeModules } from 'react-native';
 import EventTarget from 'event-target-shim';
 import MediaStreamTrackEvent from './MediaStreamTrackEvent';
 
 import type MediaStreamTrack from './MediaStreamTrack';
 
-const {WebRTCModule} = NativeModules;
+const { WebRTCModule } = NativeModules;
 
 const MEDIA_STREAM_EVENTS = [
   'active',
@@ -48,7 +48,7 @@ export default class MediaStream extends EventTarget(MEDIA_STREAM_EVENTS) {
 
   addTrack(track: MediaStreamTrack) {
     this._tracks.push(track);
-    this.dispatchEvent(new MediaStreamTrackEvent('addtrack', {track}));
+    this.dispatchEvent(new MediaStreamTrackEvent('addtrack', { track }));
   }
 
   removeTrack(track: MediaStreamTrack) {
@@ -58,7 +58,7 @@ export default class MediaStream extends EventTarget(MEDIA_STREAM_EVENTS) {
     }
     WebRTCModule.mediaStreamTrackRelease(this.reactTag, track.id);
     this._tracks.splice(index, 1);
-    this.dispatchEvent(new MediaStreamTrackEvent('removetrack', {track}));
+    this.dispatchEvent(new MediaStreamTrackEvent('removetrack', { track }));
   }
 
   getTracks(): Array<MediaStreamTrack> {

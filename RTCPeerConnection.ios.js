@@ -1,7 +1,7 @@
 'use strict';
 
 import EventTarget from 'event-target-shim';
-import {DeviceEventEmitter, NativeModules} from 'react-native';
+import { DeviceEventEmitter, NativeModules } from 'react-native';
 import * as RTCUtil from './RTCUtil';
 
 import MediaStream from './MediaStream';
@@ -15,7 +15,7 @@ import RTCIceCandidate from './RTCIceCandidate';
 import RTCIceCandidateEvent from './RTCIceCandidateEvent';
 import RTCEvent from './RTCEvent';
 
-const {WebRTCModule} = NativeModules;
+const { WebRTCModule } = NativeModules;
 
 type RTCSignalingState =
   'stable' |
@@ -163,7 +163,7 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
           } else {
             reject(data);
           }
-      });
+        });
     });
   }
 
@@ -179,7 +179,7 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
           } else {
             reject(data);
           }
-      });
+        });
     });
   }
 
@@ -195,7 +195,7 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
             // XXX: This should be OperationError
             reject(new Error('Failed to add ICE candidate'));
           }
-      });
+        });
     });
   }
 
@@ -244,7 +244,7 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
   _getTrack(streamReactTag, trackId): MediaStreamTrack {
     const stream
       = this._remoteStreams.find(
-          stream => stream.reactTag === streamReactTag);
+        stream => stream.reactTag === streamReactTag);
 
     return stream && stream._tracks.find(track => track.id === trackId);
   }
@@ -290,7 +290,7 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
           stream.addTrack(new MediaStreamTrack(tracks[i]));
         }
         this._remoteStreams.push(stream);
-        this.dispatchEvent(new MediaStreamEvent('addstream', {stream}));
+        this.dispatchEvent(new MediaStreamEvent('addstream', { stream }));
       }),
       DeviceEventEmitter.addListener('peerConnectionRemovedStream', ev => {
         if (ev.id !== this._peerConnectionId) {
@@ -303,7 +303,7 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
             this._remoteStreams.splice(index, 1);
           }
         }
-        this.dispatchEvent(new MediaStreamEvent('removestream', {stream}));
+        this.dispatchEvent(new MediaStreamEvent('removestream', { stream }));
       }),
       DeviceEventEmitter.addListener('mediaStreamTrackMuteChanged', ev => {
         if (ev.peerConnectionId !== this._peerConnectionId) {
@@ -313,7 +313,7 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
         if (track) {
           track.muted = ev.muted;
           const eventName = ev.muted ? 'mute' : 'unmute';
-          track.dispatchEvent(new MediaStreamTrackEvent(eventName, {track}));
+          track.dispatchEvent(new MediaStreamTrackEvent(eventName, { track }));
         }
       }),
       DeviceEventEmitter.addListener('peerConnectionGotICECandidate', ev => {
@@ -321,7 +321,7 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
           return;
         }
         const candidate = new RTCIceCandidate(ev.candidate);
-        const event = new RTCIceCandidateEvent('icecandidate', {candidate});
+        const event = new RTCIceCandidateEvent('icecandidate', { candidate });
         this.dispatchEvent(event);
       }),
       DeviceEventEmitter.addListener('peerConnectionIceGatheringChanged', ev => {
@@ -351,16 +351,16 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
         }
         const channel
           = new RTCDataChannel(
-              this._peerConnectionId,
-              evDataChannel.label,
-              evDataChannel);
+            this._peerConnectionId,
+            evDataChannel.label,
+            evDataChannel);
         // XXX webrtc::PeerConnection checked that id was not in use in its own
         // SID allocator before it invoked us. Additionally, its own SID
         // allocator is the authority on ResourceInUse. Consequently, it is
         // (pretty) safe to update our RTCDataChannel.id allocator without
         // checking for ResourceInUse.
         this._dataChannelIds.add(id);
-        this.dispatchEvent(new RTCDataChannelEvent('datachannel', {channel}));
+        this.dispatchEvent(new RTCDataChannelEvent('datachannel', { channel }));
       })
     ];
   }
@@ -399,12 +399,12 @@ export default class RTCPeerConnection extends EventTarget(PEER_CONNECTION_EVENT
       // Data Channel Establishment Protocol).
       for (id = 0; id < 65535 && dataChannelIds.has(id); ++id);
       // TODO Throw an error if no unused id is available.
-      dataChannelDict = Object.assign({id}, dataChannelDict);
+      dataChannelDict = Object.assign({ id }, dataChannelDict);
     }
     WebRTCModule.createDataChannel(
-        this._peerConnectionId,
-        label,
-        dataChannelDict);
+      this._peerConnectionId,
+      label,
+      dataChannelDict);
     dataChannelIds.add(id);
     return new RTCDataChannel(this._peerConnectionId, label, dataChannelDict);
   }

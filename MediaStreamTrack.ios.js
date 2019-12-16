@@ -1,12 +1,12 @@
 'use strict';
 
-import {NativeModules} from 'react-native';
+import { NativeModules } from 'react-native';
 import EventTarget from 'event-target-shim';
 import MediaStreamErrorEvent from './MediaStreamErrorEvent';
 
 import type MediaStreamError from './MediaStreamError';
 
-const {WebRTCModule} = NativeModules;
+const { WebRTCModule } = NativeModules;
 
 const MEDIA_STREAM_TRACK_EVENTS = [
   'ended',
@@ -53,7 +53,7 @@ class MediaStreamTrack extends EventTarget(MEDIA_STREAM_TRACK_EVENTS) {
     this.readonly = true; // how to decide?
     this.remote = info.remote;
     this.readyState = (_readyState === "initializing"
-                    || _readyState === "live") ? "live" : "ended";
+      || _readyState === "live") ? "live" : "ended";
   }
 
   get enabled(): boolean {

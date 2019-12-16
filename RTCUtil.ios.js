@@ -21,7 +21,7 @@ export function mergeMediaConstraints(custom, def) {
   const constraints = (def ? _deepClone(def) : {});
   if (custom) {
     if (custom.mandatory) {
-      constraints.mandatory = {...constraints.mandatory, ...custom.mandatory};
+      constraints.mandatory = { ...constraints.mandatory, ...custom.mandatory };
     }
     if (custom.optional && Array.isArray(custom.optional)) {
       // `optional` is an array, webrtc only finds first and ignore the rest if duplicate.

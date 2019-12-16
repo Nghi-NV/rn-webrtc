@@ -1,6 +1,6 @@
 'use strict';
 
-import {Platform, NativeModules} from 'react-native';
+import { Platform, NativeModules } from 'react-native';
 import * as RTCUtil from './RTCUtil';
 
 import MediaStream from './MediaStream';
@@ -8,7 +8,7 @@ import MediaStreamError from './MediaStreamError';
 import MediaStreamTrack from './MediaStreamTrack';
 import permissions from './Permissions';
 
-const {WebRTCModule} = NativeModules;
+const { WebRTCModule } = NativeModules;
 
 // native side consume string eventually
 const DEFAULT_VIDEO_CONSTRAINTS = {
@@ -23,8 +23,8 @@ const DEFAULT_VIDEO_CONSTRAINTS = {
 
 function getDefaultMediaConstraints(mediaType) {
   return (mediaType === 'audio'
-      ? {} // no audio default constraint currently
-      : RTCUtil.mergeMediaConstraints(DEFAULT_VIDEO_CONSTRAINTS));
+    ? {} // no audio default constraint currently
+    : RTCUtil.mergeMediaConstraints(DEFAULT_VIDEO_CONSTRAINTS));
 }
 
 // this will make sure we have the correct constraint structure
@@ -34,8 +34,8 @@ function getDefaultMediaConstraints(mediaType) {
 // see mediaTrackConstraints: https://www.w3.org/TR/mediacapture-streams/#dom-mediatrackconstraints
 function parseMediaConstraints(customConstraints, mediaType) {
   return (mediaType === 'audio'
-      ? RTCUtil.mergeMediaConstraints(customConstraints) // no audio default constraint currently
-      : RTCUtil.mergeMediaConstraints(customConstraints, DEFAULT_VIDEO_CONSTRAINTS));
+    ? RTCUtil.mergeMediaConstraints(customConstraints) // no audio default constraint currently
+    : RTCUtil.mergeMediaConstraints(customConstraints, DEFAULT_VIDEO_CONSTRAINTS));
 }
 
 // this will make sure we have the correct value type
@@ -44,12 +44,12 @@ function normalizeMediaConstraints(constraints, mediaType) {
     ; // to be added
   } else {
     // NOTE: android only support minXXX currently
-    for (const param of ['minWidth', 'minHeight', 'minFrameRate', 'maxWidth', 'maxHeight', 'maxFrameRate', ]) {
+    for (const param of ['minWidth', 'minHeight', 'minFrameRate', 'maxWidth', 'maxHeight', 'maxFrameRate',]) {
       if (constraints.mandatory.hasOwnProperty(param)) {
         // convert to correct type here so that native can consume directly without worries.
         constraints.mandatory[param] = (Platform.OS === 'ios'
-            ? constraints.mandatory[param].toString() // ios consumes string
-            : parseInt(constraints.mandatory[param])); // android eats integer
+          ? constraints.mandatory[param].toString() // ios consumes string
+          : parseInt(constraints.mandatory[param])); // android eats integer
       }
     }
   }
@@ -66,7 +66,7 @@ export default function getUserMedia(constraints = {}) {
   }
 
   if ((typeof constraints.audio === 'undefined' || !constraints.audio)
-      && (typeof constraints.video === 'undefined' || !constraints.video)) {
+    && (typeof constraints.video === 'undefined' || !constraints.video)) {
     return Promise.reject(new TypeError('audio and/or video is required'));
   }
 
@@ -76,7 +76,7 @@ export default function getUserMedia(constraints = {}) {
   // According to step 2 of the getUserMedia() algorithm, requestedMediaTypes
   // is the set of media types in constraints with either a dictionary value
   // or a value of "true".
-  for (const mediaType of [ 'audio', 'video' ]) {
+  for (const mediaType of ['audio', 'video']) {
     // According to the spec, the types of the audio and video members of
     // MediaStreamConstraints are either boolean or MediaTrackConstraints
     // (i.e. dictionary).
@@ -117,7 +117,7 @@ export default function getUserMedia(constraints = {}) {
 
   return new Promise((resolve, reject) => {
     Promise.all(reqPermissions).then(results => {
-      const [ audioPerm, videoPerm ] = results;
+      const [audioPerm, videoPerm] = results;
 
       // Check permission results and remove unneeded permissions.
 
@@ -138,37 +138,37 @@ export default function getUserMedia(constraints = {}) {
 
       WebRTCModule.getUserMedia(
         constraints,
-        /* successCallback */ (id, tracks) => {
+        /* successCallback */(id, tracks) => {
           const stream = new MediaStream(id);
           for (const track of tracks) {
             stream.addTrack(new MediaStreamTrack(track));
           }
-    
+
           resolve(stream);
         },
-        /* errorCallback */ (type, message) => {
+        /* errorCallback */(type, message) => {
           let error;
           switch (type) {
-          case 'DOMException':
-            // According to
-            // https://www.w3.org/TR/mediacapture-streams/#idl-def-MediaStreamError,
-            // MediaStreamError is either a DOMException object or an
-            // OverconstrainedError object. We are very likely to not have a
-            // definition of DOMException on React Native (unless the client has
-            // provided such a definition). If necessary, we will fall back to our
-            // definition of MediaStreamError.
-            if (typeof DOMException === 'function') {
-              error = new DOMException(/* message */ undefined, /* name */ message);
-            }
-            break;
-          case 'OverconstrainedError':
-            if (typeof OverconstrainedError === 'function') {
-              error = new OverconstrainedError(/* constraint */ undefined, message);
-            }
-            break;
-          case 'TypeError':
-            error = new TypeError(message);
-            break;
+            case 'DOMException':
+              // According to
+              // https://www.w3.org/TR/mediacapture-streams/#idl-def-MediaStreamError,
+              // MediaStreamError is either a DOMException object or an
+              // OverconstrainedError object. We are very likely to not have a
+              // definition of DOMException on React Native (unless the client has
+              // provided such a definition). If necessary, we will fall back to our
+              // definition of MediaStreamError.
+              if (typeof DOMException === 'function') {
+                error = new DOMException(/* message */ undefined, /* name */ message);
+              }
+              break;
+            case 'OverconstrainedError':
+              if (typeof OverconstrainedError === 'function') {
+                error = new OverconstrainedError(/* constraint */ undefined, message);
+              }
+              break;
+            case 'TypeError':
+              error = new TypeError(message);
+              break;
           }
           if (!error) {
             error = new MediaStreamError({ message, name: type });
