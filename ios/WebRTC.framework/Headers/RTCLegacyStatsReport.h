@@ -10,12 +10,12 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /** This does not currently conform to the spec. */
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCLegacyStatsReport : NSObject
 
 /** Time since 1970-01-01T00:00:00Z in milliseconds. */

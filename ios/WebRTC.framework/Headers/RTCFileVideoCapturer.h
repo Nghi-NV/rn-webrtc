@@ -9,8 +9,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
-#import "RTCVideoCapturer.h"
+#import <WebRTC/RTCVideoCapturer.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,7 +23,7 @@ typedef void (^RTCFileVideoCapturerErrorBlock)(NSError *error);
  *
  * See @c RTCVideoCapturer for more info on capturers.
  */
-RTC_OBJC_EXPORT
+RTC_EXPORT
 
 NS_CLASS_AVAILABLE_IOS(10)
 @interface RTCFileVideoCapturer : RTCVideoCapturer

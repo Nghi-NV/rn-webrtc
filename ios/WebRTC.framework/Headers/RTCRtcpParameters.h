@@ -10,11 +10,11 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCRtcpParameters : NSObject
 
 /** The Canonical Name used by RTCP. */

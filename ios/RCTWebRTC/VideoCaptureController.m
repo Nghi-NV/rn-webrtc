@@ -1,14 +1,15 @@
 
 #import "VideoCaptureController.h"
 
+static int DEFAULT_WIDTH  = 1280;
+static int DEFAULT_HEIGHT = 720;
+static int DEFAULT_FPS    = 30;
+
 
 @implementation VideoCaptureController {
     RTCCameraVideoCapturer *_capturer;
-    NSString *_deviceId;
+    NSString *_sourceId;
     BOOL _usingFrontCamera;
-    int _width;
-    int _height;
-    int _fps;
 }
 
 -(instancetype)initWithCapturer:(RTCCameraVideoCapturer *)capturer
@@ -20,12 +21,10 @@
         // Default to the front camera.
         _usingFrontCamera = YES;
 
-        _deviceId = constraints[@"deviceId"];
-        _width = [constraints[@"width"] intValue];
-        _height = [constraints[@"height"] intValue];
-        _fps = [constraints[@"frameRate"] intValue];
-
+        // Check the video contraints: examine facingMode and sourceId
+        // and pick a default if neither are specified.
         id facingMode = constraints[@"facingMode"];
+        id optionalConstraints = constraints[@"optional"];
 
         if (facingMode && [facingMode isKindOfClass:[NSString class]]) {
             AVCaptureDevicePosition position;
@@ -40,6 +39,17 @@
             }
 
             _usingFrontCamera = position == AVCaptureDevicePositionFront;
+        } else if (optionalConstraints && [optionalConstraints isKindOfClass:[NSArray class]]) {
+            NSArray *options = optionalConstraints;
+            for (id item in options) {
+                if ([item isKindOfClass:[NSDictionary class]]) {
+                    NSString *sourceId = ((NSDictionary *)item)[@"sourceId"];
+                    if (sourceId && sourceId.length > 0) {
+                        _sourceId = sourceId;
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -48,8 +58,8 @@
 
 -(void)startCapture {
     AVCaptureDevice *device;
-    if (_deviceId) {
-        device = [AVCaptureDevice deviceWithUniqueID:_deviceId];
+    if (_sourceId) {
+        device = [AVCaptureDevice deviceWithUniqueID:_sourceId];
     }
     if (!device) {
         AVCaptureDevicePosition position
@@ -59,17 +69,19 @@
         device = [self findDeviceForPosition:position];
     }
 
+    // TODO: Extract width and height from constraints.
     AVCaptureDeviceFormat *format
         = [self selectFormatForDevice:device
-                      withTargetWidth:_width
-                     withTargetHeight:_height];
+                      withTargetWidth:DEFAULT_WIDTH
+                     withTargetHeight:DEFAULT_HEIGHT];
     if (!format) {
         NSLog(@"[VideoCaptureController] No valid formats for device %@", device);
 
         return;
     }
 
-    [_capturer startCaptureWithDevice:device format:format fps:_fps];
+    // TODO: Extract fps from constraints.
+    [_capturer startCaptureWithDevice:device format:format fps:DEFAULT_FPS];
 
     NSLog(@"[VideoCaptureController] Capture started");
 }

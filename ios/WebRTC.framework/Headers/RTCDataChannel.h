@@ -11,11 +11,11 @@
 #import <AvailabilityMacros.h>
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCDataBuffer : NSObject
 
 /** NSData representation of the underlying buffer. */
@@ -35,7 +35,7 @@ RTC_OBJC_EXPORT
 @end
 
 @class RTCDataChannel;
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @protocol RTCDataChannelDelegate <NSObject>
 
 /** The data channel state changed. */
@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, RTCDataChannelState) {
   RTCDataChannelStateClosed,
 };
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCDataChannel : NSObject
 
 /**

@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 typedef NS_ENUM(NSInteger, RTCSourceState) {
   RTCSourceStateInitializing,
@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, RTCSourceState) {
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCMediaSource : NSObject
 
 /** The current state of the RTCMediaSource. */

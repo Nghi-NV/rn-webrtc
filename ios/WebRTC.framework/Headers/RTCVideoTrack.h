@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "RTCMediaStreamTrack.h"
+#import <WebRTC/RTCMediaStreamTrack.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RTCPeerConnectionFactory;
 @class RTCVideoSource;
 
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCVideoTrack : RTCMediaStreamTrack
 
 /** The video source for this video track. */

@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RTCMacros.h"
+#import <WebRTC/RTCMacros.h>
 
 typedef NS_ENUM(NSInteger, RTCDispatcherQueueType) {
   // Main dispatcher queue.
@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, RTCDispatcherQueueType) {
 /** Dispatcher that asynchronously dispatches blocks to a specific
  *  shared dispatch queue.
  */
-RTC_OBJC_EXPORT
+RTC_EXPORT
 @interface RTCDispatcher : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
